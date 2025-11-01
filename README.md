@@ -188,11 +188,16 @@ kill -9 <PID>
 4. Enable HTTPS
 5. Configure production CORS origins
 6. Set up environment variables on hosting platform
-7. Deploy to Railway, Heroku, DigitalOcean, or AWS
 
 ## 📄 License
 
 MIT License
+
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
 
 ---
 
