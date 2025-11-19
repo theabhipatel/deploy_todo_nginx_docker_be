@@ -1,11 +1,11 @@
-import express, { Application } from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import { connectDB } from './config/database';
-import { errorHandler } from './middlewares/errorHandler';
-import authRoutes from './routes/authRoutes';
-import todoRoutes from './routes/todoRoutes';
+import express, { Application } from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { connectDB } from "./config/database";
+import { errorHandler } from "./middlewares/errorHandler";
+import authRoutes from "./routes/authRoutes";
+import todoRoutes from "./routes/todoRoutes";
 
 // Load env vars
 dotenv.config();
@@ -18,7 +18,7 @@ const app: Application = express();
 // Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: "*",
     credentials: true,
   })
 );
@@ -27,12 +27,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/todos', todoRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/todos", todoRoutes);
 
 // Health check
-app.get('/health', (req, res) => {
-  res.status(200).json({ success: true, message: 'Server is running' });
+app.get("/health", (req, res) => {
+  res.status(200).json({ success: true, message: "Server is running" });
 });
 
 // Error handler (must be last)
