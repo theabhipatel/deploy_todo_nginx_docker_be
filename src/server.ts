@@ -25,6 +25,12 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/todos", todoRoutes);
 
+// Home route
+app.get("/", (req, res) => {
+  res
+    .status(200)
+    .json({ success: true, message: "welcome to the TheAbhiPatel era 🚀." });
+});
 // Health check
 app.get("/health", (req, res) => {
   res.status(200).json({ success: true, message: "Server is running" });
