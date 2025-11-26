@@ -40,12 +40,10 @@ app.use("/api/todos", todoRoutes);
 
 // Home route
 app.get("/", (req, res) => {
-  res
-    .status(200)
-    .json({
-      success: true,
-      message: "Welcome to the TheAbhiPatel era 🚀🚀🚀.",
-    });
+  res.status(200).json({
+    success: true,
+    message: "Welcome to the TheAbhiPatel era 🚀.",
+  });
 });
 // Health check
 app.get("/health", (req, res) => {
