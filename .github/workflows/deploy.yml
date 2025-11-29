@@ -57,3 +57,5 @@ jobs:
               echo "✅ Backend update complete. 🎉"
             else
               echo "🟨 App not found, Please start cicd pipeline from frontend first and then trigger backend pipeline"
+            fi
+            
