@@ -2,7 +2,7 @@ name: Deploy backend to EC2
 
 on:
   push:
-    barnches:
+    branches:
       - production
 
 jobs:
@@ -58,4 +58,3 @@ jobs:
             else
               echo "🟨 App not found, Please start cicd pipeline from frontend first and then trigger backend pipeline"
             fi
-            
