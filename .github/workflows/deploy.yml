@@ -17,7 +17,7 @@ jobs:
       # Test docker build Ci test
       - name: Build Docker image ci test
         run: |
-          docker build -t node-app
+          docker build -t node-app .
 
       # Deploy to EC2
       - name: Deploy to EC2
