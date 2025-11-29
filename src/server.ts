@@ -42,7 +42,7 @@ app.use("/api/todos", todoRoutes);
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "Welcome to the TheAbhiPatel era 🚀🚀.",
+    message: "Welcome to the TheAbhiPatel era 🚀.",
   });
 });
 // Health check
