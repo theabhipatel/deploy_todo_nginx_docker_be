@@ -1,280 +1,234 @@
-# 📝 MERN Stack Todo Application
+# 🚀 Single Command MERN App Deployment on Any Server
+This project provides a **fully automated**, production-ready CI/CD setup for deploying a **MERN Application** (Frontend + Backend) with Domain & Auto SSL on any Ubuntu server (I will use EC2 instance) using **Docker, Docker Compose, Nginx, Certbot SSL**, and **GitHub Actions**.
 
-A full-stack Todo application built with MongoDB, Express, React, and Node.js (MERN) using TypeScript. Features JWT authentication, modern UI with shadcn/ui components, and complete CRUD operations.
+Just **push your code to the `production` branch** — your server will automatically install everything, configure itself, build both repos, and deploy the updated application.
 
-## ✨ Features
+> Check [Frontend](https://github.com/theabhipatel/deploy_todo_nginx_docker_fe.git) repo here.
 
-### 🔐 Authentication
-- User registration and login
-- JWT-based authentication with access and refresh tokens
-- HTTP-only cookies for secure token storage
-- Password hashing with bcryptjs
-- Protected routes and API endpoints
+---
 
-### ✅ Todo Management
-- Create, read, update, and delete todos
-- Mark todos as pending or done
-- Search todos by title or description
-- Pagination (10 items per page)
-- User-specific todos (users only see their own)
+# ✨ What This Setup Does
 
-### 🎨 Modern UI
-- Clean and responsive design
-- Built with Tailwind CSS and shadcn/ui components
-- Loading states and empty states
-- Form validation
-- Modal dialogs for add/edit operations
-- Beautiful gradient backgrounds
+### ✅ 1. First-Time Server Setup (Fully Automatic)
+When your EC2/Ubuntu server is empty, the GitHub Action will automatically:
 
-## 🛠 Tech Stack
+- Install Docker & Docker Compose  
+- Clone *both* frontend and backend repositories  
+- Create the `.env` files using GitHub Secrets  
+- Build and start all Docker containers  
+- Configure Nginx reverse proxy  
+- Generate & install SSL certificates using Certbot  
 
-### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **TypeScript** - Type safety
-- **MongoDB** - Database
-- **Mongoose** - ODM
-- **JWT** - Authentication
-- **bcryptjs** - Password hashing
-- **express-validator** - Request validation
-- **cookie-parser** - Cookie handling
-- **cors** - Cross-origin resource sharing
+---
 
-### Frontend
-- **React 18** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **React Router** - Routing
-- **Axios** - HTTP client
-- **Tailwind CSS** - Styling
-- **shadcn/ui** - Component library
-- **Lucide React** - Icons
-- **React Hook Form** - Form handling
-- **Zod** - Schema validation
+### ✅ 2. Auto-Update on Every Push
+If the application already exists on the server:
 
-## 📁 Project Structure
+- Fetch latest `production` branch from both repos  
+- Hard reset to ensure clean sync  
+- Recreate `.env` files from GitHub Secrets  
+- Rebuild all Docker containers  
+- Restart application with near-zero downtime  
+- Clean old Docker images  
 
+---
+
+### ✅ 3. Zero Manual SSH Work
+Deployment is **100% handled by GitHub Actions**.
+
+---
+
+# 🧑‍💻 What You Need To Do Manually (Only Once)
+
+### ✔ 1. Clone both repositories
+Update the application code or keep it as-is for testing.
 ```
-/backend
-  /src
-    /models
-      User.ts           # User model
-      Todo.ts           # Todo model
-    /controllers
-      authController.ts # Auth logic
-      todoController.ts # Todo CRUD logic
-    /routes
-      authRoutes.ts     # Auth endpoints
-      todoRoutes.ts     # Todo endpoints
-    /middlewares
-      auth.ts           # JWT verification
-      errorHandler.ts   # Error handling
-    /utils
-      jwt.ts            # JWT utilities
-    /config
-      database.ts       # MongoDB connection
-    server.ts           # Express app setup
-
-/frontend
-  /src
-    /components
-      /ui               # shadcn/ui components
-      ProtectedRoute.tsx
-    /contexts
-      AuthContext.tsx   # Auth state management
-    /pages
-      LoginPage.tsx
-      SignupPage.tsx
-      DashboardPage.tsx
-    /lib
-      api.ts            # API calls
-      utils.ts          # Utilities
-    App.tsx
-    main.tsx
-    index.css
+git clone https://github.com/theabhipatel/deploy_todo_nginx_docker_fe.git
+git clone https://github.com/theabhipatel/deploy_todo_nginx_docker_be.git
 ```
 
-## 🚀 Getting Started
+### ✔ 2. Create a new SSH key pair ([more](#-ssh-key-setup))
 
-### Prerequisites
+### ✔ 3. Create an Ubuntu VPS / AWS EC2 instance
 
-- Node.js (v16 or higher)
-- MongoDB (local or MongoDB Atlas)
-- npm or yarn
+### ✔ 4. Add your SSH public key to the server ([more](#-ssh-key-setup))
 
-### Backend Setup
+### ✔ 5. Point your domain to your EC2
+Add DNS “A Records”:
 
-1. Navigate to the backend directory:
-```bash
-cd backend
+```
+yourdomain.com → <EC2_PUBLIC_IP>
+api.yourdomain.com → <EC2_PUBLIC_IP>
 ```
 
-2. Install dependencies:
-```bash
-npm install
+### ✔ 6. Create `.env` files for frontend & backend ([more](#-environment-variables-env-setup))
+
+### ✔ 7. Add GitHub Secrets ([more](#-add-these-to-frontend-repo-github-secrets))
+
+### ✔ 8. Use the `production` branch for deployment  
+Every push to `production` triggers the GitHub Actions workflow and deploys your app automatically.
+
+That’s it. 🎉  
+Your app gets deployed in under **2 minutes** with minimal manual work.
+
+---
+
+# 📦 Project Structure (Combined)
+
+```
+/project-root
+  ├── frontend/
+  │   ├── docker-compose.yml
+  │   ├── Dockerfile
+  │   ├── install-docker.sh
+  │   ├── nginx/
+  │   │   ├── entrypoint.sh
+  │   │   └── templates/
+  │   │       ├── http.template
+  │   │       ├── https.template
+  │   ├── .env.example
+  │   ├── React/Tailwind app code...
+  │   └── .github/
+  │       └── workflows/
+  │           └── deploy.yml      ← Frontend GitHub Actions workflow
+
+  ├── backend/
+  │   ├── docker-compose.yml
+  │   ├── Dockerfile
+  │   ├── install-docker.sh
+  │   ├── nginx/
+  │   │   ├── entrypoint.sh
+  │   │   └── templates/
+  │   │       ├── http.template
+  │   │       ├── https.template
+  │   ├── .env.example
+  │   ├── Node/Express/MongoDB code...
+  │   └── .github/
+  │       └── workflows/
+  │           └── deploy.yml      ← Backend GitHub Actions workflow
 ```
 
-3. Create a `.env` file in the backend directory:
-```env
+---
+
+# 🔧 Environment Variables (`.env` Setup)
+Before deploying, create a .env file in respective dir using .env.example file or the template below:
+
+### Backend `.env` example:
+```
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/todo-app
+# MONGODB_URI=mongodb://localhost:27017/todo-app # local db url
+MONGODB_URI=mongodb://mongo:27017/tododb # docker container url
 JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
 JWT_REFRESH_SECRET=your_super_secret_refresh_key_change_this_in_production
 JWT_EXPIRE=15m
 JWT_REFRESH_EXPIRE=7d
 NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
 ```
 
-4. Start MongoDB (if running locally):
-```bash
-mongod
+### Frontend `.env` example:
+```
+FRONTEND_DOMAIN=todo-domain.com
+BACKEND_DOMAIN=api.todo-domain.com
+DOMAINS=todo-domain.com,api.todo-domain.com
+EMAIL=your-email@gmail.com
+VITE_API_URL=https://api.todo-domain.com/api
 ```
 
-5. Run the backend server:
-```bash
-# Development mode
-npm run dev
 
-# Production mode
-npm run build
-npm start
+Then:
+
+1. Copy the content of your `.env` file respectively for frontend and backend 
+2. Go to GitHub → Repository → **Settings → Secrets → Actions**  
+3. Create a secret named for frontend:
 ```
-
-The backend will run on `http://localhost:5000`
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-```bash
-cd frontend
+ENV_FILE_FRONTEND 
 ```
-
-2. Install dependencies:
-```bash
-npm install
+Paste your `.env` content 
+4. Create a secret named for backend:
 ```
-
-3. Create a `.env` file in the frontend directory:
-```env
-VITE_API_URL=http://localhost:5000/api
+ENV_FILE_BACKEND 
 ```
+Paste your `.env` content 
 
-4. Start the development server:
-```bash
-npm run dev
-```
+### 🔐 Add these to Frontend repo GitHub Secrets:
 
-The frontend will run on `http://localhost:5173`
+| Secret Name | Description |
+|-------------|-------------|
+| **EC2_HOST** | EC2 server IP |
+| **EC2_USER** | `ubuntu` |
+| **EC2_SSH_KEY** | Private SSH key |
+| **ENV_FILE_BACKEND** | Backend `.env` content |
+| **ENV_FILE_FRONTEND** | Frontend `.env` content |
+| **BACKEND_REPO_NAME** | Backend repo name only. eg `deploy_todo_nginx_docker_be` |
 
-## 🧪 Testing the Application
+### 🔐 Add these to Backend repo GitHub Secrets:
 
-### Demo User
-
-For testing, you can create a user through the signup page or use these credentials if you seed the database:
-
-**Email:** `demo@example.com`  
-**Password:** `password123`
-
-### API Endpoints
-
-#### Authentication
-- `POST /api/auth/signup` - Register a new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user (protected)
-- `POST /api/auth/logout` - Logout user (protected)
-
-#### Todos
-- `GET /api/todos?page=1&limit=10&search=keyword` - Get all todos (protected)
-- `GET /api/todos/:id` - Get single todo (protected)
-- `POST /api/todos` - Create todo (protected)
-- `PUT /api/todos/:id` - Update todo (protected)
-- `DELETE /api/todos/:id` - Delete todo (protected)
-
-## 📝 Usage Guide
-
-### Creating an Account
-1. Navigate to the signup page
-2. Enter your name, email, and password (min 6 characters)
-3. Click "Create account"
-4. You'll be automatically logged in and redirected to the dashboard
-
-### Managing Todos
-1. **Add Todo**: Click the "Add Todo" button, fill in the title and optional description
-2. **Mark as Done**: Click the checkbox next to any todo to toggle its status
-3. **Edit Todo**: Click the edit icon to modify title, description, or status
-4. **Delete Todo**: Click the trash icon to remove a todo
-5. **Search**: Use the search bar to filter todos by title or description
-6. **Pagination**: Navigate through pages if you have more than 10 todos
-
-## 🔒 Security Features
-
-- Passwords are hashed using bcryptjs before storage
-- JWT tokens stored in HTTP-only cookies (prevents XSS attacks)
-- Access tokens expire after 15 minutes
-- Refresh tokens expire after 7 days
-- Automatic token refresh on API calls
-- Protected routes on both frontend and backend
-- Input validation on all forms
-- CORS configured for security
-
-## 🎨 UI Components
-
-The application uses shadcn/ui components:
-- **Button** - Primary actions and navigation
-- **Input** - Form inputs with validation
-- **Card** - Content containers
-- **Dialog** - Modal popups for add/edit
-- **Badge** - Status indicators
-- **Table** - Todo list display
-
-## 🐛 Troubleshooting
-
-### MongoDB Connection Issues
-- Ensure MongoDB is running locally or update `MONGODB_URI` with your MongoDB Atlas connection string
-- Check if the port 27017 is not being used by another application
-
-### CORS Errors
-- Verify that `FRONTEND_URL` in backend `.env` matches your frontend URL
-- Check that `withCredentials: true` is set in axios configuration
-
-### Authentication Issues
-- Clear browser cookies and try logging in again
-- Ensure JWT secrets are properly set in `.env`
-- Check that cookies are being sent with requests (check Network tab)
-
-### Build Errors
-- Delete `node_modules` and reinstall: `rm -rf node_modules package-lock.json && npm install`
-- Ensure TypeScript version compatibility
-- Check that all required dependencies are installed
-
-## 🚀 Production Deployment
-
-### Backend
-1. Set `NODE_ENV=production` in environment variables
-2. Use a production MongoDB instance (MongoDB Atlas recommended)
-3. Set strong JWT secrets
-4. Enable HTTPS
-5. Set up proper CORS origins
-6. Deploy to services like Heroku, Railway, or DigitalOcean
-
-### Frontend
-1. Update API base URL in `vite.config.ts` or use environment variables
-2. Build the production bundle: `npm run build`
-3. Deploy the `dist` folder to Vercel, Netlify, or any static hosting service
-
-## 📄 License
-
-MIT License - feel free to use this project for learning or production!
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-## 👨‍💻 Author
-
-Built with ❤️ using the MERN stack and TypeScript
+| Secret Name | Description |
+|-------------|-------------|
+| **EC2_HOST** | EC2 server IP |
+| **EC2_USER** | `ubuntu` |
+| **EC2_SSH_KEY** | Private SSH key |
+| **ENV_FILE_BACKEND** | Backend `.env` content |
 
 ---
 
-**Happy Coding! 🎉**
+# 🔑 SSH Key Setup
+
+Generate:
+```
+ssh-keygen -t ed25519 -C "github-deploy" -f ./my-ec2-key
+```
+
+Add:
+
+- `my-ec2-key.pub` → EC2 `~/.ssh/authorized_keys`
+- `my-ec2-key` → GitHub Secret `EC2_SSH_KEY`
+
+---
+
+# 🚀 How Deployment Works
+
+### Push to `production` → GitHub Action:
+
+```
+Push → GitHub Action triggers →
+    SSH into EC2 →
+        If app does NOT exist:
+            install docker
+            clone both repos
+            create .env files
+            build & run containers
+            configure nginx + SSL
+        Else:
+            fetch latest code
+            reset files
+            update envs
+            rebuild both frontend & backend
+            restart services
+```
+
+Everything is automated.
+
+---
+
+# 🎉 Final Result
+
+You get a full **MERN stack deployment pipeline** with:
+
+- Docker  
+- Docker Compose  
+- Nginx Reverse Proxy  
+- Auto SSL (Certbot)  
+- GitHub Actions  
+- EC2 / Ubuntu  
+
+Write code → Push (production) → Your Todo App goes live. 🚀
+That's it. 💯
+
+---
+
+### built by:
+**TheAbhiPatel**  
+[Portfolio](https://www.theabhipatel.com) • [LinkedIn](https://www.linkedin.com/in/theabhipatel)
