@@ -12,6 +12,7 @@ A robust RESTful API built with Node.js, Express, TypeScript, and MongoDB. Featu
 - 👤 User-specific data isolation
 - ✔️ Request validation with express-validator
 - 🛡️ Protected routes and middleware
+- 🚀 Single command deployment to any ubutnu server ( See full guide [DEPLOYMENT.md](https://github.com/theabhipatel/deploy_todo_nginx_docker_be/blob/master/DEPLOYMENT.md) )
 
 ## 🛠 Tech Stack
 
